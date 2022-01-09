@@ -1,4 +1,4 @@
-package ru.netology.graphics;
+package ru.netology.graphics.image;
 
 import ru.netology.graphics.image.TextColorSchema;
 
@@ -13,31 +13,18 @@ import ru.netology.graphics.image.TextColorSchema;
 // Например, если значение близко к 0, то выбрать надо '▇'; если к 255, то '-'.
 // Если где-то посередине, то и выбирать надо тоже где-то посередине.
 
-public class TextColorSchemaClass implements TextColorSchema  {
+public class TextColorSchemaClass2 implements TextColorSchema {
+
+    //можно тернарным или делением 256 на сайз чар массива
+
     @Override
     public char convert(int color) {
 
+        if (color <= 95) return '#';
+        else if (color <= 127) return '%';
+        else if (color <= 159) return '*';
+        else if (color <= 191) return '+';
+        else return '\'';
 
-        if (color<=31)return '#';
-        else if (color<=62) return '$';
-        else if (color<=95) return '@';
-        else if (color<=127) return '%';
-        else if (color<=159) return '*';
-        else if (color<=191) return '+';
-        else if (color<=223) return '-';
-        else    return '\'';
-
-
-
-//        if (color<=255) return '\'';
-//        else if (color<=223) return '-';
-//        else if (color<=191) return '+';
-//        else if (color<=159) return '*';
-//        else if (color<=127) return '%';
-//        else if (color<=95) return '@';
-//        else if (color<=63&&color>31) return '$';
-//        else  return '#';
-
-        //можно тернарным или делением 256 на сайз чар массива
     }
 }

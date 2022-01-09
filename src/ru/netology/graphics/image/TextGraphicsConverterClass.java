@@ -1,7 +1,4 @@
-package ru.netology.graphics;
-
-import ru.netology.graphics.image.*;
-//import ru.netology.graphics.image.TextColorSchema;
+package ru.netology.graphics.image;
 
 import javax.imageio.ImageIO;
 import java.awt.*;
@@ -10,18 +7,54 @@ import java.awt.image.WritableRaster;
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
-import java.util.Arrays;
+//import ru.netology.graphics.image.TextColorSchema;
+
 
 public class TextGraphicsConverterClass implements TextGraphicsConverter {
 
-    int maxWidth=100; //??
+    int maxWidth;
 
-    int maxHeight=100; //??
+    int maxHeight;
 
-    double maxRatio =1.5; //??
+    double maxRatio;
 
-    TextColorSchema schema = new TextColorSchemaClass() ; //????
+    TextColorSchema schema;
 
+
+    public TextGraphicsConverterClass() {
+
+//        maxWidth=100; //??
+//
+//        maxHeight=100; //??
+//
+//        maxRatio =1.85;     //          filip 0.666 ok
+//        maxRatio =0.67;     //          filip 0.666 ok
+//         maxRatio =0.56;   //   excp   filip 0.666 ok
+//
+        schema = new TextColorSchemaClass1();
+    }
+
+
+    @Override
+    public void setMaxWidth(int width) {
+        this.maxWidth = width;
+    }
+
+    @Override
+    public void setMaxHeight(int height) {
+        this.maxHeight = height;
+    }
+
+    @Override
+    public void setMaxRatio(double maxRatio) {
+        this.maxRatio = maxRatio;
+    }
+
+    @Override
+    public void setTextColorSchema(ru.netology.graphics.image.TextColorSchema schema) {
+        this.schema = schema;
+
+    }
 
     @Override
     public String convert(String url) throws IOException, BadImageSizeException {
@@ -33,8 +66,11 @@ public class TextGraphicsConverterClass implements TextGraphicsConverter {
         // и, если картинка не подходит, выбросить исключение BadImageSizeException.
         // Чтобы получить ширину картинки, вызовите img.getWidth(), высоту - img.getHeight()
 
-        double ratio = (double) img.getWidth() / img.getWidth();
-        if (ratio > maxRatio) throw new BadImageSizeException(ratio, maxRatio);
+        double ratio = (double) img.getWidth() / img.getHeight();
+
+//        JOptionPane.showMessageDialog(null, "ratio :" +ratio);
+
+        if (ratio > maxRatio && maxRatio != 0.0) throw new BadImageSizeException(ratio, maxRatio);
 
         // Если конвертеру выставили максимально допустимые ширину и/или высоту,
         // вам надо по ним и по текущим высоте и ширине вычислить новые высоту
@@ -48,21 +84,21 @@ public class TextGraphicsConverterClass implements TextGraphicsConverter {
         // Подумайте, какими действиями можно вычислить новые размеры.
         // Не получается? Спросите вашего руководителя по курсовой, поможем!
 
-
 //        int newWidth=img.getWidth();
 //        int newHeight=img.getWidth();
 
+        int newWidth = 0;
+        int newHeight = 0;
 
-        int newWidth=0;
-        int newHeight=0;
-
+//        JOptionPane.showMessageDialog(null, "getWidth :" +img.getWidth());            //853
+//        JOptionPane.showMessageDialog(null, "getHeight :" +img.getHeight());         //1280
 
         double koef1 = (double) img.getWidth() / maxWidth; //во сска раз больше
         double koef2 = (double) img.getHeight() / maxHeight;
 
         if (koef1 >= koef2 && koef1 >= 1) {
-            newWidth = (int) ((double) img.getWidth()/ koef1);
-            newHeight = (int) ((double)img.getHeight() / koef1);
+            newWidth = (int) ((double) img.getWidth() / koef1);
+            newHeight = (int) ((double) img.getHeight() / koef1);
         } else if (koef2 > koef1 && koef2 >= 1) {
             newWidth = (int) ((double) img.getWidth() / koef2);
             newHeight = (int) ((double) img.getHeight() / koef2);
@@ -75,6 +111,8 @@ public class TextGraphicsConverterClass implements TextGraphicsConverter {
             newHeight = (int) ((double) img.getHeight() / koef2);
         }
 
+//        JOptionPane.showMessageDialog(null, "newWidth :" +newWidth  +" а дб 66");            //если сервер рабоатет 200 а не 66 ????
+//        JOptionPane.showMessageDialog(null, "newHeight :" +newHeight+" а дб 100");          //если сервер рабоатет 300 ане 100 ????
 
         // Теперь нам надо попросить картинку изменить свои размеры на новые.
         // Последний параметр означает, что мы просим картинку плавно сузиться
@@ -95,8 +133,9 @@ public class TextGraphicsConverterClass implements TextGraphicsConverter {
         // Вы можете отслеживать каждый из этапов, просто в любом удобном для
         // вас моменте сохранив промежуточную картинку в файл через:
 //         ImageIO.write(imageObject, "png", new File("out.png"));
-         ImageIO.write(bwImg, "png", new File("out2.png"));
+        ImageIO.write(bwImg, "png", new File("out2.png"));                               // ооокэ --- даже не перевернутая
         // После вызова этой инструкции у вас в проекте появится файл картинки out.png
+
 
         // Теперь давайте пройдёмся по пикселям нашего изображения.
         // Если для рисования мы просили у картинки .createGraphics(),
@@ -123,56 +162,42 @@ public class TextGraphicsConverterClass implements TextGraphicsConverter {
         // получить соответствующий символ c. Логикой превращения цвета
         // в символ будет заниматься другой объект, который мы рассмотрим ниже
 
+        //запоминаем символ c, например, в двумерном массиве или как-то ещё на ваше усмотрение
 
-        char[][] cc = new char[newWidth][newHeight];
-        String str ="";
-        for (int w = 0; w < newWidth ; w++) {
+//        char[][] cc = new char[newWidth][newHeight];
+        char[][] cc = new char[newHeight][newWidth];
+        String str = "";
+
+        for (int w = 0; w < newWidth; w++) {
             for (int h = 0; h < newHeight; h++) {
                 int color = bwRaster.getPixel(w, h, new int[3])[0];
                 char c = schema.convert(color);
-                cc[w][h]= c;
-                str +=String.valueOf(c);
-//                System.out.print(c);
+                cc[h][w] = c;
+//                cc[w][h]= c;
+
+//                str +=String.valueOf(c);
             }
-//            System.out.print("\n");
-            str+="\n";
+//            str+="\n";
         }
-
-//        System.out.println(Arrays.deepToString(cc));
-
-        //запоминаем символ c, например, в двумерном массиве или как-то ещё на ваше усмотрение
-
 
         // Осталось собрать все символы в один большой текст
         // Для того, чтобы изображение не было слишком узким, рекомендую
         // каждый пиксель превращать в два повторяющихся символа, полученных
         // от схемы.
 
+        for (int i = 0; i < cc.length; i++) {
+            for (int j = 0; j < cc[i].length; j++) {
+//                str +=(String.valueOf(cc[i][j])).repeat(2);        // не пашет
+                str += String.valueOf(cc[i][j]);
+                str += String.valueOf(cc[i][j]);
+//                str +=String.valueOf(cc[i][j]);                   // 3 не стоит - web версия разлетается
 
+            }
+            str += "\n";
+        }
 
         return str; // Возвращаем собранный текст.
 //        return "piu"; // Возвращаем собранный текст.
-    }
-
-    @Override
-    public void setMaxWidth(int width) {
-        this.maxWidth = width;
-    }
-
-    @Override
-    public void setMaxHeight(int height) {
-        this.maxHeight = height;
-    }
-
-    @Override
-    public void setMaxRatio(double maxRatio) {
-        this.maxRatio = maxRatio;
-    }
-
-    @Override
-    public void setTextColorSchema(ru.netology.graphics.image.TextColorSchema schema) {
-        this.schema = schema;
-        //объект мой
     }
 
 }
