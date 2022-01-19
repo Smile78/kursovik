@@ -1,7 +1,5 @@
 package ru.netology.graphics.image;
 
-import ru.netology.graphics.image.TextColorSchema;
-
 
 //Предлагается следующая логика его работы.
 // Вот список символов от самых «тёмных» к самым «светлым»: '▇', '●', '◉', '◍', '◎', '○', '☉', '◌', '-'.
@@ -13,23 +11,16 @@ import ru.netology.graphics.image.TextColorSchema;
 // Например, если значение близко к 0, то выбрать надо '▇'; если к 255, то '-'.
 // Если где-то посередине, то и выбирать надо тоже где-то посередине.
 
-public class TextColorSchemaClass1 implements TextColorSchema {
+public class TextColorSchemaClass3 implements TextColorSchema {
 
-    //можно тернарным или делением 256 на сайз чар массива
+    //можно тернарным
+    // или делением 256 на сайз чар массива
 
-    @Override
+    char symbols[]={'#', '$', '@', '%' , '*', '+', '-','\''};
+
+
     public char convert(int color) {
 
-        if (color <= 31) return '#';
-        else if (color <= 62) return '$';
-        else if (color <= 95) return '@';
-        else if (color <= 127) return '%';
-        else if (color <= 159) return '*';
-        else if (color <= 191) return '+';
-        else if (color <= 223) return '-';
-        else return '\'';
+        return symbols[(int) Math.floor  (color / 256. * symbols.length)]; }
 
-
-
-    }
 }

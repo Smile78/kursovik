@@ -7,29 +7,28 @@ import java.awt.image.WritableRaster;
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
-//import ru.netology.graphics.image.TextColorSchema;
+import ru.netology.graphics.image.TextColorSchema;
 
 
 public class TextGraphicsConverterClass implements TextGraphicsConverter {
 
-    int maxWidth;
+    private int maxWidth;
 
-    int maxHeight;
+    private int maxHeight;
 
-    double maxRatio;
+    private double maxRatio;
 
-    TextColorSchema schema;
+    private TextColorSchema schema;
 
 
     public TextGraphicsConverterClass() {
 
-//        maxWidth=100; //??
+        maxWidth=100; //??
+        maxHeight=100; //??
 //
-//        maxHeight=100; //??
-//
-//        maxRatio =1.85;     //          filip 0.666 ok
+        maxRatio =1.85;     //          filip 0.666 ok
 //        maxRatio =0.67;     //          filip 0.666 ok
-//         maxRatio =0.56;   //   excp   filip 0.666 ok
+//        maxRatio =0.56;     //   excp   filip 0.666 ok
 //
         schema = new TextColorSchemaClass1();
     }
@@ -51,7 +50,8 @@ public class TextGraphicsConverterClass implements TextGraphicsConverter {
     }
 
     @Override
-    public void setTextColorSchema(ru.netology.graphics.image.TextColorSchema schema) {
+//    public void setTextColorSchema(ru.netology.graphics.image.TextColorSchema schema) {
+    public void setTextColorSchema(TextColorSchema schema) {
         this.schema = schema;
 
     }
@@ -66,11 +66,14 @@ public class TextGraphicsConverterClass implements TextGraphicsConverter {
         // и, если картинка не подходит, выбросить исключение BadImageSizeException.
         // Чтобы получить ширину картинки, вызовите img.getWidth(), высоту - img.getHeight()
 
-        double ratio = (double) img.getWidth() / img.getHeight();
-
+        double ratio = (double) img.getWidth() / img.getHeight(); // если ширина в столькото раз больше высоты
 //        JOptionPane.showMessageDialog(null, "ratio :" +ratio);
+        if (ratio > maxRatio && maxRatio != 0.0) throw new BadImageSizeException(ratio, maxRatio);  //если пустой конструктор   Ратио всегда  больше
 
-        if (ratio > maxRatio && maxRatio != 0.0) throw new BadImageSizeException(ratio, maxRatio);
+         ratio = (double)img.getHeight()/ img.getWidth()   ; // если высота в столькото раз больше ширины или ратио2??
+        if (ratio > maxRatio && maxRatio != 0.0) throw new BadImageSizeException(ratio, maxRatio);  //если пустой конструктор  Ратио всегда больше
+//
+
 
         // Если конвертеру выставили максимально допустимые ширину и/или высоту,
         // вам надо по ним и по текущим высоте и ширине вычислить новые высоту
@@ -96,20 +99,29 @@ public class TextGraphicsConverterClass implements TextGraphicsConverter {
         double koef1 = (double) img.getWidth() / maxWidth; //во сска раз больше
         double koef2 = (double) img.getHeight() / maxHeight;
 
-        if (koef1 >= koef2 && koef1 >= 1) {
+        if (koef1 >= koef2  ) {
             newWidth = (int) ((double) img.getWidth() / koef1);
             newHeight = (int) ((double) img.getHeight() / koef1);
-        } else if (koef2 > koef1 && koef2 >= 1) {
+        } else if (koef2 > koef1  ) {
             newWidth = (int) ((double) img.getWidth() / koef2);
             newHeight = (int) ((double) img.getHeight() / koef2);
         }
-        if (koef1 >= koef2 && koef1 < 1) {
-            newWidth = (int) ((double) img.getWidth() / koef1);
-            newHeight = (int) ((double) img.getHeight() / koef1);
-        } else if (koef2 > koef1 && koef2 < 1) {
-            newWidth = (int) ((double) img.getWidth() / koef2);
-            newHeight = (int) ((double) img.getHeight() / koef2);
-        }
+
+//
+//        if (koef1 >= koef2 && koef1 >= 1) {
+//            newWidth = (int) ((double) img.getWidth() / koef1);
+//            newHeight = (int) ((double) img.getHeight() / koef1);
+//        } else if (koef2 > koef1 && koef2 >= 1) {
+//            newWidth = (int) ((double) img.getWidth() / koef2);
+//            newHeight = (int) ((double) img.getHeight() / koef2);
+//        }
+//        if (koef1 >= koef2 && koef1 < 1) {
+//            newWidth = (int) ((double) img.getWidth() / koef1);
+//            newHeight = (int) ((double) img.getHeight() / koef1);
+//        } else if (koef2 > koef1 && koef2 < 1) {
+//            newWidth = (int) ((double) img.getWidth() / koef2);
+//            newHeight = (int) ((double) img.getHeight() / koef2);
+//        }
 
 //        JOptionPane.showMessageDialog(null, "newWidth :" +newWidth  +" а дб 66");            //если сервер рабоатет 200 а не 66 ????
 //        JOptionPane.showMessageDialog(null, "newHeight :" +newHeight+" а дб 100");          //если сервер рабоатет 300 ане 100 ????
@@ -167,6 +179,8 @@ public class TextGraphicsConverterClass implements TextGraphicsConverter {
 //        char[][] cc = new char[newWidth][newHeight];
         char[][] cc = new char[newHeight][newWidth];
         String str = "";
+        StringBuilder strB = new StringBuilder();
+        strB.append("");
 
         for (int w = 0; w < newWidth; w++) {
             for (int h = 0; h < newHeight; h++) {
@@ -187,14 +201,22 @@ public class TextGraphicsConverterClass implements TextGraphicsConverter {
 
         for (int i = 0; i < cc.length; i++) {
             for (int j = 0; j < cc[i].length; j++) {
+                strB.append(String.valueOf(cc[i][j]));
+                strB.append(String.valueOf(cc[i][j]));
+
 //                str +=(String.valueOf(cc[i][j])).repeat(2);        // не пашет
-                str += String.valueOf(cc[i][j]);
-                str += String.valueOf(cc[i][j]);
+
+//                str += String.valueOf(cc[i][j]);
+//                str += String.valueOf(cc[i][j]);
 //                str +=String.valueOf(cc[i][j]);                   // 3 не стоит - web версия разлетается
 
             }
-            str += "\n";
+//            str += "\n";
+            strB.append("\n");
         }
+
+
+        str = strB.toString();
 
         return str; // Возвращаем собранный текст.
 //        return "piu"; // Возвращаем собранный текст.
